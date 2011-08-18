@@ -1,0 +1,10 @@
+Projeto de customização visual dos gráficos do Adobe Flex
+
+* atenção esse projeto foi baseado no Adobe Flex 4.5 SDK
+
+Classes:
+
+- ColorHelper
+- StylePieChart
+- StyleColumnChart
+- StyleAreaChart

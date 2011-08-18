@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" 
+			   pageTitle="Custom Charts Test"
+			   width="100%" height="100%">
+	<s:layout>
+		<s:VerticalLayout horizontalAlign="center"/>
+	</s:layout>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.erkobridee.chartUtil.ColorHelper;
+			import com.erkobridee.chartUtil.StyleAreaChart;
+			import com.erkobridee.chartUtil.StyleColumnChart;
+			import com.erkobridee.chartUtil.StylePieChart;
+			
+			import mx.charts.CategoryAxis;
+			import mx.charts.chartClasses.IAxis;
+			import mx.collections.ArrayCollection;
+			
+			//------------------------------------------------------------------
+			
+			[Bindable]
+			public var expenses:ArrayCollection = new ArrayCollection([
+				{Data:"IN", Value:2000},
+				{Data:"OUT", Value:1000}
+			]);
+			
+			[Bindable]
+			private var expensesAC:ArrayCollection = new ArrayCollection( [
+				{ Month: "Jan", Profit: 2000, Expenses: 1500, Amount: 450 },
+				{ Month: "Feb", Profit: 1000, Expenses: 200, Amount: 600 },
+				{ Month: "Mar", Profit: 1500, Expenses: 500, Amount: 300 },
+				{ Month: "Apr", Profit: 1800, Expenses: 1200, Amount: 900 },
+				{ Month: "May", Profit: 2400, Expenses: 575, Amount: 500 } ]);
+				
+			//------------------------------------------------------------------
+			
+			private function linearAxis_labelFunc(item:Object, prevValue:Object, axis:IAxis):String 
+			{
+				return currencyFormatter.format(item);
+			}
+			
+			private function categoryAxis_labelFunc(item:Object, prevValue:Object, axis:CategoryAxis, categoryItem:Object):String 
+			{
+				var datNum:Number = Date.parse(item);
+				var tempDate:Date = new Date(datNum);
+				return dateFormatter.format(tempDate).toUpperCase();
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<mx:DateFormatter id="dateFormatter" formatString="DD" />
+		<mx:CurrencyFormatter id="currencyFormatter" precision="2" />
+		
+		<s:XMLListCollection id="dp">
+			<s:source>
+				<fx:XMLList>
+					<quote date="8/1/2007" open="40.29" close="39.58" />
+					<quote date="8/2/2007" open="39.4" close="39.52" />
+					<quote date="8/3/2007" open="39.47" close="38.75" />
+					<quote date="8/6/2007" open="38.71" close="39.38" />
+					<quote date="8/7/2007" open="39.08" close="39.42" />
+					<quote date="8/8/2007" open="39.61" close="40.23" />
+					<quote date="8/9/2007" open="39.9" close="40.75" />
+					<quote date="8/10/2007" open="41.3" close="41.06" />
+					<quote date="8/13/2007" open="41" close="40.83" />
+					<quote date="8/14/2007" open="41.01" close="40.41" />
+					<quote date="8/15/2007" open="40.22" close="40.18" />
+					<quote date="8/16/2007" open="39.83" close="39.96" />
+					<quote date="8/17/2007" open="40.18" close="40.32" />
+					<quote date="8/20/2007" open="40.55" close="40.74" />
+					<quote date="8/21/2007" open="40.41" close="40.13" />
+					<quote date="8/22/2007" open="40.4" close="40.77" />
+					<quote date="8/23/2007" open="40.82" close="40.6" />
+					<quote date="8/24/2007" open="40.5" close="40.41" />
+					<quote date="8/27/2007" open="40.38" close="40.81" />
+				</fx:XMLList>
+			</s:source>
+		</s:XMLListCollection>
+		
+	</fx:Declarations>
+	
+	<s:Spacer width="100%" height="1"/>
+	
+	<mx:LinkBar id="buttonBar" dataProvider="{vs}">
+	</mx:LinkBar>
+	
+	<mx:ViewStack id="vs">
+		
+		<s:NavigatorContent id="pieContent" width="750" height="400" label="Pie">
+			<s:VGroup width="100%" height="100%" horizontalAlign="center">
+				<mx:PieChart id="myChart" width="400" height="100%"
+							 dataProvider="{expenses}"
+							 showDataTips="true">
+					<mx:series>
+						<mx:PieSeries
+							field="Value"
+							nameField="Data"
+							labelPosition="callout"
+							fills="{StylePieChart.greenRedFills}"/>
+					</mx:series>
+				</mx:PieChart>
+				<mx:Legend dataProvider="{myChart}" direction="horizontal"/>
+			</s:VGroup>
+		</s:NavigatorContent>
+		
+		<s:NavigatorContent id="columnContent" width="750" height="400" label="Column">
+			<mx:ColumnChart id="columnChart"
+							showDataTips="true"
+							dataProvider="{dp}"
+							width="100%"
+							height="100%">
+				<!-- vertical axis -->
+				<mx:verticalAxis>
+					<mx:LinearAxis baseAtZero="false"
+								   labelFunction="linearAxis_labelFunc" />
+				</mx:verticalAxis>
+				<!-- horizontal axis -->
+				<mx:horizontalAxis>
+					<mx:CategoryAxis id="ca"
+									 categoryField="@date"
+									 title="August 2007"
+									 labelFunction="categoryAxis_labelFunc" />
+				</mx:horizontalAxis>
+				<!-- horizontal axis renderer -->
+				<mx:horizontalAxisRenderers>
+					<mx:AxisRenderer axis="{ca}"
+									 canDropLabels="true" />
+				</mx:horizontalAxisRenderers>
+				<!-- series -->
+				<mx:series>
+					<mx:ColumnSeries
+						displayName="Open"
+						xField="@date"
+						yField="@open"
+						fill="{StyleColumnChart.orangeLinearGradient}"
+						stroke="{ColorHelper.orangeStroke}">
+					</mx:ColumnSeries>
+					<mx:ColumnSeries
+						displayName="Close"
+						xField="@date"
+						yField="@close"
+						fill="{StyleColumnChart.blueLinearGradient}"
+						stroke="{ColorHelper.blueStroke}">
+					</mx:ColumnSeries>
+				</mx:series>
+				<!-- series filters -->
+				<mx:seriesFilters>
+					<fx:Array />
+				</mx:seriesFilters>
+			</mx:ColumnChart>
+		</s:NavigatorContent>
+		
+		<s:NavigatorContent id="areaContent" width="750" height="400" label="Area">
+			<s:VGroup width="100%" height="100%">
+				<mx:AreaChart id="Areachart" 
+							  height="100%" 
+							  width="100%"
+							  paddingLeft="5" 
+							  paddingRight="5" 
+							  showDataTips="true" 
+							  dataProvider="{expensesAC}"
+							  >                 
+					<mx:horizontalAxis>
+						<mx:CategoryAxis categoryField="Month"/>
+					</mx:horizontalAxis>
+					
+					<mx:series>
+						<mx:AreaSeries 
+							yField="Profit" 
+							displayName="Profit" 
+							areaStroke="{ColorHelper.greenStroke}" 
+							areaFill="{StyleAreaChart.linearGradientColor(ColorHelper.green)}"
+							/>
+						<mx:AreaSeries 
+							yField="Expenses" 
+							displayName="Expenses" 
+							areaStroke="{ColorHelper.redStroke}" 
+							areaFill="{StyleAreaChart.linearGradientColor(ColorHelper.red)}"
+							/>
+						<mx:AreaSeries 
+							yField="Amount" 
+							displayName="Amount" 
+							areaStroke="{ColorHelper.yellowStroke}" 
+							areaFill="{StyleAreaChart.linearGradientColor(ColorHelper.yellow)}"
+							/>
+					</mx:series>
+				</mx:AreaChart>            
+				<mx:Legend dataProvider="{Areachart}" direction="horizontal"/>
+			</s:VGroup>
+		</s:NavigatorContent>
+		
+	</mx:ViewStack>
+	
+</s:Application>
