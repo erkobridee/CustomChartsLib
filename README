@@ -1,6 +1,14 @@
 Projeto de customização visual dos gráficos do Adobe Flex
 
-* atenção esse projeto foi baseado no Adobe Flex 4.5 SDK
+Adobe Flex 3.6 SDK:
+
+- CustomChartsLibFx3
+- CustomChartsTestFx3
+
+Adobe Flex 4.5 SDK:
+
+- CustomChartsLib
+- CustomChartsTest
 
 Classes:
 
